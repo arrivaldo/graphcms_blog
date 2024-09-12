@@ -9,9 +9,10 @@ export default async function Home() {
   // console.log(posts);
 
   return (
+    <>
     <div className="container mx-auto px-10 mb-8">
       <Head>
-        <title>CMS Blog</title>
+        <title>Blog</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <FeaturedPosts />
@@ -28,5 +29,7 @@ export default async function Home() {
         </div>
       </div>
     </div>
+    </>
+
   );
 }

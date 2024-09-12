@@ -4,9 +4,10 @@ const graphqlAPI = process.env.NEXT_PUBLIC_GRAPHCMS_ENDPOINT;
 
 export const getPosts = async () => {
   const query = gql`
-    query MyQuery($after: String) {
-      postsConnection(after: $after) {
+   query MyQuery {
+      postsConnection {
         edges {
+          cursor
           node {
             author {
               bio
@@ -29,26 +30,13 @@ export const getPosts = async () => {
             }
           }
         }
-        pageInfo {
-          endCursor
-          hasNextPage
-        }
       }
     }
   `;
 
-  let posts = [];
-  let hasNextPage = true;
-  let after = null;
+  const result = await request(graphqlAPI, query);
 
-  while (hasNextPage) {
-    const result = await request(graphqlAPI, query, { after });
-    posts = [...posts, ...result.postsConnection.edges];
-    hasNextPage = result.postsConnection.pageInfo.hasNextPage;
-    after = result.postsConnection.pageInfo.endCursor;
-  }
-
-  return posts;
+  return result.postsConnection.edges;
 };
 
 export const getPostDetails = async (slug) => {
