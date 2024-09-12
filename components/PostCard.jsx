@@ -22,8 +22,8 @@ const PostCard = ({ post }) => {
             <div className='flex items-center justify-center mb-4 lg:mb-0 w-full lg:w-auto mr-8'>
               <img
                 alt={post.author.name}
-                height="30px"
-                width="30px"
+                height={30}
+                width={30}
                 className='align-middle rounded-full'
                 src={post.author.photo.url}
               />

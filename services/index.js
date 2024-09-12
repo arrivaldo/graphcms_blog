@@ -1,4 +1,3 @@
-
 import { request, gql } from "graphql-request";
 
 const graphqlAPI = process.env.NEXT_PUBLIC_GRAPHCMS_ENDPOINT;
@@ -107,8 +106,6 @@ export const getRecentPosts = async () => {
 };
 
 export const getSimilarPosts = async (categories, slug) => {
-
-  
   const hasCategories = categories && categories.length > 0;
 
   const query = gql`
@@ -116,7 +113,11 @@ export const getSimilarPosts = async (categories, slug) => {
       posts(
         where: {
           slug_not: $slug
-          ${hasCategories ? `AND: { categories_some: { slug_in: $categories } }` : ''}
+          ${
+            hasCategories
+              ? `AND: { categories_some: { slug_in: $categories } }`
+              : ""
+          }
         }
         last: 3
       ) {
@@ -140,7 +141,6 @@ export const getSimilarPosts = async (categories, slug) => {
   return result.posts;
 };
 
-
 export const getCategories = async () => {
   const query = gql`
     query GetCategories {
@@ -153,26 +153,24 @@ export const getCategories = async () => {
 
   const result = await request(graphqlAPI, query);
 
-
   return result.categories;
-}
-
+};
 
 export const submitComment = async (obj) => {
-  const result = await fetch('/api/comments', {
-    method: 'POST',
+  const result = await fetch("/api/comments", {
+    method: "POST",
     headers: {
-        'Content-Type': 'application/json'
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(obj),
-  })
+  });
   return result.json();
-}
+};
 
 export const getComments = async (slug) => {
   const query = gql`
-    query GetComments($slug:String!) {
-      comments(where: {post: {slug:$slug}}){
+    query GetComments($slug: String!) {
+      comments(where: { post: { slug: $slug } }) {
         name
         createdAt
         comment
@@ -184,7 +182,6 @@ export const getComments = async (slug) => {
 
   return result.comments;
 };
-
 
 export const getPostsByCategory = async (slug) => {
   const query = gql`
@@ -204,7 +201,6 @@ export const getPostsByCategory = async (slug) => {
   const result = await request(graphqlAPI, query, { slug });
   return result.postsConnection.edges.map((edge) => edge.node);
 };
-
 
 // export const getCategoryPost = async (slug) => {
 //   const query = gql`
@@ -229,43 +225,79 @@ export const getPostsByCategory = async (slug) => {
 //   return result.postsConnection.edges;
 // };
 
-
-
-   export const getCategoryPost = async (slug) => {
-     const query = gql`
+export const getCategoryPost = async (slug) => {
+  const query = gql`
        query GetCategoryPost($slug: String!) {
-        postsConnection(where: {category: {slug: $slug}}) {
-      edges {
-        node {
-           category {
-                 name
-                 slug
-               }
+         postsConnection(where: {category_some: {slug: $slug}}) {
+        edges {
+          cursor
+          node {
+            author {
+              bio
+              name
+              id
+              photo {
+                url
+              }
+            }
+            createdAt
+            slug
+            title
+            excerpt
+            featuredImage {
+              url
+            }
+            category {
+              name
+              slug
+            }
+          }
         }
       }
-    }
-  }
        }
      `;
 
-     try {
-       const result = await request(graphqlAPI, query, { slug });
-        console.log('GraphQL query result:', result);
-       console.log(result.postsConnection.edges)
-       return result.postsConnection.edges.map((edge) => edge.node);
-     } catch (error) {
-       console.error('ERROR ERROR ERROR ERROR:', error);
+  try {
+    const result = await request(graphqlAPI, query, { slug });
+    console.log("GraphQL query result:", result);
+    console.log(result.postsConnection.edges);
+    return result.postsConnection.edges.map((edge) => edge.node);
+  } catch (error) {
+    console.error("ERROR ERROR ERROR ERROR:", error);
 
-       return [];
-     }
-   };
-
-
+    return [];
+  }
+};
 
 
+export const getFeaturedPosts = async () => {
+  const query = gql`
+    query GetFeaturedPosts {
+      posts(where: { featuredPost: true }) {
+        author {
+          name
+          photo {
+            url
+          }
+        }
+        featuredImage {
+          url
+        }
+        title
+        slug
+        createdAt
+      }
+    }
+  `;
+
+  const result = await request(graphqlAPI, query);
+
+  return result.posts;
+};
 
 
-// export const getCategoryPost = async (slug) => {  
+
+// export const getCategoryPost = async (slug) => {
 //   const query = gql`
 //     query GetCategoryPost($slug: String!) {
 //       postsConnection(where: { categories_some: { slug: $slug } }) {
