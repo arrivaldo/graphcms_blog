@@ -6,7 +6,7 @@ import { FeaturedPosts } from '../sections'
 
 export default async function Home() {
   const posts = await getPosts(); // Fetching data directly inside the component
-  // console.log(posts);
+  console.log('Postsssssss',posts);
 
   return (
     <>

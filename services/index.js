@@ -34,7 +34,7 @@ export const getPosts = async () => {
     }
   `;
 
-  const result = await request(graphqlAPI, query);
+  const result = await request(graphqlAPI, query, { random: Math.random() }, { cache: 'no-store' });
 
   return result.postsConnection.edges;
 };
@@ -88,7 +88,7 @@ export const getRecentPosts = async () => {
     }
   `;
 
-  const result = await request(graphqlAPI, query);
+  const result = await request(graphqlAPI, query, { cache: 'no-store' });
 
   return result.posts;
 };
@@ -139,7 +139,7 @@ export const getCategories = async () => {
     }
   `;
 
-  const result = await request(graphqlAPI, query);
+  const result = await request(graphqlAPI, query, { cache: 'no-store' });
 
   return result.categories;
 };
@@ -186,7 +186,7 @@ export const getPostsByCategory = async (slug) => {
     }
   `;
 
-  const result = await request(graphqlAPI, query, { slug });
+  const result = await request(graphqlAPI, query, { slug }, { cache: 'no-store' });
   return result.postsConnection.edges.map((edge) => edge.node);
 };
 
@@ -246,7 +246,7 @@ export const getCategoryPost = async (slug) => {
      `;
 
   try {
-    const result = await request(graphqlAPI, query, { slug });
+    const result = await request(graphqlAPI, query, { slug }, { random: Math.random() }, { cache: 'no-store' });
     console.log("GraphQL query result:", result);
     console.log(result.postsConnection.edges);
     return result.postsConnection.edges.map((edge) => edge.node);
@@ -278,7 +278,7 @@ export const getFeaturedPosts = async () => {
     }
   `;
 
-  const result = await request(graphqlAPI, query);
+  const result = await request(graphqlAPI, query, { cache: 'no-store' });
 
   return result.posts;
 };

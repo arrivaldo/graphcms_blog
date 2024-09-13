@@ -37,6 +37,7 @@ const PostDetails = async ({ params }) => {
 // Static paths with fallback
 export async function generateStaticParams() {
   const posts = await getPosts();
+  console.log('asdasdasdasd',posts)
 
   return posts.map(({ node: { slug } }) => ({
     slug
